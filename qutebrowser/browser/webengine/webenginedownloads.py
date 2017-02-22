@@ -132,6 +132,11 @@ class DownloadItem(downloads.AbstractDownloadItem):
         self._qt_item.setPath(self._filename)
         self._qt_item.accept()
 
+    def url(self):
+        """Return the source url of a download"""
+        return self._qt_item.url()
+
+
 
 def _get_suggested_filename(path):
     """Convert a path we got from chromium to a suggested filename.

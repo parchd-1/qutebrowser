@@ -351,6 +351,10 @@ class DownloadItem(downloads.AbstractDownloadItem):
                      self._retry_info.manager is nam)
         return running_nam or retry_nam
 
+    def url(self):
+        """Return the source url of a download"""
+        return self._reply.url()
+
 
 class DownloadManager(downloads.AbstractDownloadManager):
 

@@ -603,3 +603,15 @@ Feature: Downloading things from a website.
         And I run :follow-hint 0
         And I wait until the download is finished
         Then the downloaded file user-agent should contain Safari/
+
+    ## :download-yank
+
+    Scenario: Yanking the download url
+        When I run :download http://localhost:(port)/drip?numbytes=128&duration=5
+        And I run :download-yank
+        Then the clipboard should contain: "http://localhost:(port)/drip?numbytes=128&duration=5"
+
+    Scenario: Yanking the url of a non-existant download
+        When I run :download-yank with count 666
+        Then the error "There's no download 666!" should be shown
+

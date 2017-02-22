@@ -654,6 +654,10 @@ class AbstractDownloadItem(QObject):
         else:  # pragma: no cover
             raise ValueError("Unsupported download target: {}".format(target))
 
+    def url(self):
+        """Return the source url of a download"""
+        raise NotImplementedError
+
 
 class AbstractDownloadManager(QObject):
 
@@ -941,6 +945,32 @@ class DownloadModel(QAbstractListModel):
                 count = len(self)
             raise cmdexc.CommandError("Download {} is not done!".format(count))
         download.open_file(cmdline)
+
+    @cmdutils.register(instance='download-model', scope='window')
+    @cmdutils.argument('count', count=True)
+    def download_yank(self, sel=False, count=0):
+        """Yank the url of the last/[count]th download.
+
+        Args:
+            sel: Use the primary selection instead of the clipboard.
+            count: The index of the download to get the url for.
+        """
+
+        try:
+            download = self[count - 1]
+        except IndexError:
+            self._raise_no_download(count)
+
+        url = download.url()
+
+        if sel and utils.supports_selection():
+            target = "primary selection"
+        else:
+            sel = False
+            target = "clipboard"
+
+        utils.set_clipboard(url, selection=sel)
+        message.info("Yanked download URL to {}: {}".format(target, url))
 
     @cmdutils.register(instance='download-model', scope='window')
     @cmdutils.argument('count', count=True)
